@@ -96,5 +96,5 @@ val root = (project in file("."))
   .settings(
   name := "example-sbt-release",
   version := "1.0.0",
-    skip in publish
-)
+    skip in publish := true
+).aggregate(sub1, sub2)
