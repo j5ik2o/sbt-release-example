@@ -1,5 +1,7 @@
 # sbt-release-example
 
+This is a example showing how to release individual.
+
 ```sh
 $ sbt 'project sub1' 'release with-defaults'                                                                 ✔  4830  00:18:57
 Use of ~/.sbtconfig is deprecated, please migrate global settings to /usr/local/etc/sbtopts
@@ -36,3 +38,12 @@ Use of ~/.sbtconfig is deprecated, please migrate global settings to /usr/local/
 [info] To github.com:j5ik2o/sbt-release-example.git
 [info]  * [new tag]         sub1-v1.0.13 -> sub1-v1.0.13
 ```
+
+Note: the release of the top project does not include bump of sub projects, in this configuration case.
+
+```sh
+$ sbt 'release with-defaults'
+...
+```
+
+Bumped `./version`, but `sub1/version.sbt` and `sub2/version.sbt` not be bumped.
