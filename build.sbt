@@ -1,3 +1,4 @@
+import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 lazy val releaseSettings = Seq(
   releaseUseGlobalVersion := false,
   releaseVersionFile := Def.setting{ if (name.value == "example-sbt-release") file("./version.sbt") else file(name.value + "/version.sbt") }.value,
@@ -9,6 +10,24 @@ lazy val releaseSettings = Seq(
   },
   releaseTagComment := s"Releasing ${name.value}-${(version in ThisBuild).value}",
   releaseCommitMessage := s"Setting version to ${name.value}-${(version in ThisBuild).value}",
+
+// releaseCrossBuild := true
+
+releasePublishArtifactsAction := PgpKeys.publishSigned.value,
+
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,
+  inquireVersions,
+  runClean,
+  setReleaseVersion,
+  commitReleaseVersion,
+  tagRelease,
+  //releaseStepCommandAndRemaining("+publishSigned"),
+  setNextVersion,
+  commitNextVersion,
+  //releaseStepCommand("sonatypeReleaseAll"),
+  pushChanges
+)
 )
 val scalaVersion211 = "2.11.12"
 val scalaVersion212 = "2.12.8"
@@ -97,22 +116,4 @@ val root = (project in file("."))
   )
   .aggregate(sub1, sub2)
 
-import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 
-// releaseCrossBuild := true
-
-releasePublishArtifactsAction := PgpKeys.publishSigned.value
-
-releaseProcess := Seq[ReleaseStep](
-  checkSnapshotDependencies,
-  inquireVersions,
-  runClean,
-  setReleaseVersion,
-  commitReleaseVersion,
-  tagRelease,
-  releaseStepCommandAndRemaining("+publishSigned"),
-  setNextVersion,
-  commitNextVersion,
-  releaseStepCommand("sonatypeReleaseAll"),
-  pushChanges
-)
