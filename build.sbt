@@ -95,5 +95,6 @@ val root = (project in file("."))
   .settings(releaseSettings)
   .settings(
   name := "example-sbt-release",
-  version := "1.0.0"
+  version := "1.0.0",
+    skip in publish
 )
