@@ -1,4 +1,4 @@
-# sbt-release-example
+# sbt-release-individual-example
 
 This is a example showing how to release individual.
 
