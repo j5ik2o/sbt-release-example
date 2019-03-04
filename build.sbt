@@ -1,6 +1,6 @@
 lazy val releaseSettings = Seq(
   releaseUseGlobalVersion := false,
-  releaseVersionFile := baseDirectory.value / "version.sbt",
+  releaseVersionFile := Def.setting{ if (name.value == "example-sbt-release") file("./version.sbt") else file(name.value + "/version.sbt") }.value,
   releaseTagName := {
     val versionInThisBuild = (version in ThisBuild).value
     val versionValue = version.value
@@ -94,7 +94,6 @@ val root = (project in file("."))
   .settings(releaseSettings)
   .settings(
     name := "example-sbt-release",
-    skip in publish := true
   )
   .aggregate(sub1, sub2)
 
