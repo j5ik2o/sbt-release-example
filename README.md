@@ -39,7 +39,7 @@ Use of ~/.sbtconfig is deprecated, please migrate global settings to /usr/local/
 [info]  * [new tag]         sub1-v1.0.13 -> sub1-v1.0.13
 ```
 
-Note: the release of the top project does not include bump of sub projects, in this configuration case.
+Note: the release of the top project does not include version bump of sub projects, in this configuration case.
 
 ```sh
 $ sbt 'release with-defaults'
