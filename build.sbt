@@ -1,7 +1,18 @@
-
+lazy val releaseSettings = Seq(
+  releaseUseGlobalVersion := false,
+  releaseVersionFile := file(baseDirectory.value + "/version.sbt"),
+  releaseTagName := {
+    val versionInThisBuild = (version in ThisBuild).value
+    val versionValue = version.value
+    s"${name.value}-v${if (releaseUseGlobalVersion.value) versionInThisBuild
+    else versionValue}"
+  },
+  releaseTagComment := s"Releasing ${name.value}-${(version in ThisBuild).value}",
+  releaseCommitMessage := s"Setting version to ${name.value}-${(version in ThisBuild).value}",
+  releaseTagName := s"${name.value}-v${(version in ThisBuild).value}"
+)
 val scalaVersion211 = "2.11.12"
 val scalaVersion212 = "2.12.8"
-
 val coreSettings = Seq(
   sonatypeProfileName := "com.github.j5ik2o",
   organization := "com.github.j5ik2o",
@@ -22,9 +33,7 @@ val coreSettings = Seq(
         case Some((2L, scalaMajor)) if scalaMajor == 12 =>
           Seq.empty
         case Some((2L, scalaMajor)) if scalaMajor <= 11 =>
-          Seq(
-            "-Yinline-warnings"
-          )
+          Seq("-Yinline-warnings")
       }
     }
   },
@@ -66,23 +75,11 @@ val coreSettings = Seq(
     "DynamoDB Local Repository" at "https://s3-us-west-2.amazonaws.com/dynamodb-local/release"
   ),
   libraryDependencies ++= Seq(
-    "org.scalatest"     %% "scalatest"        % "3.0.5"  % Test,
-    "org.scalacheck"    %% "scalacheck"       % "1.14.0" % Test,
-    "ch.qos.logback"    % "logback-classic"   % "1.2.3"  % Test,
-    "com.github.j5ik2o" %% "scalatestplus-db" % "1.0.7"  % Test
-  ),
-) // ++ scalaStyleSettings
-lazy val releaseSettings = Seq(
-  releaseUseGlobalVersion := false,
-  releaseVersionFile := file(name.value + "/version.sbt"),
-  releaseTagName := {
-    val versionInThisBuild = (version in ThisBuild).value
-    val versionValue = version.value
-    s"${name.value}-v${if (releaseUseGlobalVersion.value) versionInThisBuild else versionValue}"
-  },
-  releaseTagComment    := s"Releasing ${name.value}-${(version in ThisBuild).value}",
-  releaseCommitMessage := s"Setting version to ${name.value}-${(version in ThisBuild).value}",
-  releaseTagName := s"${name.value}-v${(version in ThisBuild).value}"
+    "org.scalatest" %% "scalatest" % "3.0.5" % Test,
+    "org.scalacheck" %% "scalacheck" % "1.14.0" % Test,
+    "ch.qos.logback" % "logback-classic" % "1.2.3" % Test,
+    "com.github.j5ik2o" %% "scalatestplus-db" % "1.0.7" % Test
+  )
 )
 
 val sub1 = (project in file("sub1"))
@@ -97,10 +94,10 @@ val root = (project in file("."))
   .settings(coreSettings)
   .settings(releaseSettings)
   .settings(
-  name := "example-sbt-release",
-  version := "1.0.0",
+    name := "example-sbt-release",
     skip in publish := true
-).aggregate(sub1, sub2)
+  )
+  .aggregate(sub1, sub2)
 
 import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 
