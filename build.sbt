@@ -1,6 +1,6 @@
 lazy val releaseSettings = Seq(
   releaseUseGlobalVersion := false,
-  releaseVersionFile := file(baseDirectory.value + "/version.sbt"),
+  releaseVersionFile := baseDirectory.value / "version.sbt",
   releaseTagName := {
     val versionInThisBuild = (version in ThisBuild).value
     val versionValue = version.value
@@ -9,7 +9,6 @@ lazy val releaseSettings = Seq(
   },
   releaseTagComment := s"Releasing ${name.value}-${(version in ThisBuild).value}",
   releaseCommitMessage := s"Setting version to ${name.value}-${(version in ThisBuild).value}",
-  releaseTagName := s"${name.value}-v${(version in ThisBuild).value}"
 )
 val scalaVersion211 = "2.11.12"
 val scalaVersion212 = "2.12.8"
@@ -107,7 +106,7 @@ releasePublishArtifactsAction := PgpKeys.publishSigned.value
 
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
-  inquireVersions,
+//  inquireVersions,
   runClean,
   setReleaseVersion,
   commitReleaseVersion,
