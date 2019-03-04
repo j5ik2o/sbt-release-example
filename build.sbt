@@ -9,7 +9,6 @@ lazy val releaseSettings = Seq(
   releaseTagName := s"${name.value}-v${version.value}" ,
   releaseTagComment := s"Releasing ${name.value}-${version.value}",
   releaseCommitMessage := s"Setting version to ${name.value}-${version.value}",
-// releaseCrossBuild := true
   releasePublishArtifactsAction := PgpKeys.publishSigned.value,
   releaseProcess := Seq[ReleaseStep](
     checkSnapshotDependencies,
@@ -26,12 +25,10 @@ lazy val releaseSettings = Seq(
   )
 )
 val scalaVersion211 = "2.11.12"
-val scalaVersion212 = "2.12.8"
 val coreSettings = Seq(
   sonatypeProfileName := "com.github.j5ik2o",
   organization := "com.github.j5ik2o",
   scalaVersion := scalaVersion212,
-//  crossScalaVersions ++= Seq(scalaVersion211, scalaVersion212),
   scalacOptions ++= {
     Seq(
       "-feature",
@@ -42,14 +39,7 @@ val coreSettings = Seq(
       "-language:_",
       "-Ydelambdafy:method",
       "-target:jvm-1.8"
-    ) ++ {
-      CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((2L, scalaMajor)) if scalaMajor == 12 =>
-          Seq.empty
-        case Some((2L, scalaMajor)) if scalaMajor <= 11 =>
-          Seq("-Yinline-warnings")
-      }
-    }
+    )
   },
   publishMavenStyle := true,
   publishArtifact in Test := false,
@@ -80,20 +70,7 @@ val coreSettings = Seq(
   credentials := {
     val ivyCredentials = (baseDirectory in LocalRootProject).value / ".credentials"
     Credentials(ivyCredentials) :: Nil
-  },
-  resolvers ++= Seq(
-    Resolver.sonatypeRepo("snapshots"),
-    Resolver.sonatypeRepo("releases"),
-    "Seasar2 Repository" at "http://maven.seasar.org/maven2",
-    Resolver.bintrayRepo("danslapman", "maven"),
-    "DynamoDB Local Repository" at "https://s3-us-west-2.amazonaws.com/dynamodb-local/release"
-  ),
-  libraryDependencies ++= Seq(
-    "org.scalatest" %% "scalatest" % "3.0.5" % Test,
-    "org.scalacheck" %% "scalacheck" % "1.14.0" % Test,
-    "ch.qos.logback" % "logback-classic" % "1.2.3" % Test,
-    "com.github.j5ik2o" %% "scalatestplus-db" % "1.0.7" % Test
-  )
+  }
 )
 
 val sub1 = (project in file("sub1"))
