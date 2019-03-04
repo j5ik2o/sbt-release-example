@@ -79,7 +79,10 @@ lazy val releaseSettings = Seq(
     val versionInThisBuild = (version in ThisBuild).value
     val versionValue = version.value
     s"${name.value}-v${if (releaseUseGlobalVersion.value) versionInThisBuild else versionValue}"
-  }
+  },
+  releaseTagComment    := s"Releasing ${name.value}-${(version in ThisBuild).value}",
+  releaseCommitMessage := s"Setting version to ${name.value}-${(version in ThisBuild).value}",
+  releaseTagName := s"${name.value}-v${(version in ThisBuild).value}"
 )
 
 val sub1 = (project in file("sub1"))
@@ -98,3 +101,23 @@ val root = (project in file("."))
   version := "1.0.0",
     skip in publish := true
 ).aggregate(sub1, sub2)
+
+import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
+
+// releaseCrossBuild := true
+
+releasePublishArtifactsAction := PgpKeys.publishSigned.value
+
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,
+  inquireVersions,
+  runClean,
+  setReleaseVersion,
+  commitReleaseVersion,
+  tagRelease,
+  releaseStepCommandAndRemaining("+publishSigned"),
+  setNextVersion,
+  commitNextVersion,
+  releaseStepCommand("sonatypeReleaseAll"),
+  pushChanges
+)
