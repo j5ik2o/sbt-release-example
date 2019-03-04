@@ -1,33 +1,29 @@
 import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
+val rootProjectName = "sbt-release-example"
 lazy val releaseSettings = Seq(
   releaseUseGlobalVersion := false,
-  releaseVersionFile := Def.setting{ if (name.value == "example-sbt-release") file("./version.sbt") else file(name.value + "/version.sbt") }.value,
-  releaseTagName := {
-    val versionInThisBuild = (version in ThisBuild).value
-    val versionValue = version.value
-    s"${name.value}-v${if (releaseUseGlobalVersion.value) versionInThisBuild
-    else versionValue}"
-  },
-  releaseTagComment := s"Releasing ${name.value}-${(version in ThisBuild).value}",
-  releaseCommitMessage := s"Setting version to ${name.value}-${(version in ThisBuild).value}",
-
+  releaseVersionFile := Def.setting {
+    if (name.value == rootProjectName ) file("./version.sbt")
+    else file(name.value + "/version.sbt")
+  }.value,
+  releaseTagName := s"${name.value}-v${version.value}" ,
+  releaseTagComment := s"Releasing ${name.value}-${version.value}",
+  releaseCommitMessage := s"Setting version to ${name.value}-${version.value}",
 // releaseCrossBuild := true
-
-releasePublishArtifactsAction := PgpKeys.publishSigned.value,
-
-releaseProcess := Seq[ReleaseStep](
-  checkSnapshotDependencies,
-  inquireVersions,
-  runClean,
-  setReleaseVersion,
-  commitReleaseVersion,
-  tagRelease,
-  //releaseStepCommandAndRemaining("+publishSigned"),
-  setNextVersion,
-  commitNextVersion,
-  //releaseStepCommand("sonatypeReleaseAll"),
-  pushChanges
-)
+  releasePublishArtifactsAction := PgpKeys.publishSigned.value,
+  releaseProcess := Seq[ReleaseStep](
+    checkSnapshotDependencies,
+    inquireVersions,
+    runClean,
+    setReleaseVersion,
+    commitReleaseVersion,
+    tagRelease,
+    //releaseStepCommandAndRemaining("+publishSigned"),
+    setNextVersion,
+    commitNextVersion,
+    //releaseStepCommand("sonatypeReleaseAll"),
+    pushChanges
+  )
 )
 val scalaVersion211 = "2.11.12"
 val scalaVersion212 = "2.12.8"
@@ -111,9 +107,5 @@ val sub2 = (project in file("sub2"))
 val root = (project in file("."))
   .settings(coreSettings)
   .settings(releaseSettings)
-  .settings(
-    name := "example-sbt-release",
-  )
+  .settings(name := rootProjectName)
   .aggregate(sub1, sub2)
-
-
